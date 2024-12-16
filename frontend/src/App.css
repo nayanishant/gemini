@@ -25,7 +25,7 @@
 }
 
 button {
-  border: none;
+  border: 0.5px solid transparent; /* Add a transparent border */
   border-radius: 4px;
   outline: none;
   color: var(--textClr);
@@ -40,5 +40,5 @@ button {
 button:hover {
   color: var(--other);
   background-color: var(--textClr);
-  border: 0.5px solid var(--textClr);
+  border-color: var(--textClr); /* Change border color on hover */
 }
