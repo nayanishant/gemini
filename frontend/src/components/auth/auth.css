@@ -1,0 +1,127 @@
+.container-wrapper {
+  display: grid;
+  place-items: center;
+  height: 100dvh;
+}
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80dvh;
+  width: 60dvw;
+  background-color: var(--secondaryClr);
+  border-radius: 24px;
+}
+
+.container-left {
+  text-align: center;
+  margin: 8px;
+  padding: 0 24px;
+  /* backdrop-filter: blur(6px) saturate(200%);
+  -webkit-backdrop-filter: blur(6px) saturate(200%);
+  background-color: rgba(155, 155, 155, 0.42);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.125); */
+}
+
+.container-left h2 {
+  font-size: 2rem;
+}
+
+.container-left .social-btn,
+.container-left form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  margin: 8px;
+}
+
+.container-left .social-btn button {
+  padding: 0.6rem;
+  margin: 0.25rem;
+  outline: none;
+  border-radius: 0.5rem;
+  border: none;
+  font-size: 1.6rem;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.container-left .social-btn button:hover {
+  background-color: rgba(223, 222, 222, 0.623);
+}
+
+.container-left .social-btn .fa-google {
+  color: #db4437;
+}
+
+.container-left .social-btn .fa-facebook {
+  color: #1877f2;
+}
+
+.container-left .social-btn .fa-linkedin {
+  color: #0077b5;
+}
+
+.container-left p,
+.container-left form a {
+  color: var(--textClr);
+}
+
+.container-left p {
+  font-size: 1.2rem;
+}
+
+.container-left form a {
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.container-left form a:hover {
+  text-decoration: underline;
+  color: var(--other);
+}
+
+.container-left form {
+  flex-direction: column;
+  gap: 8px;
+}
+
+.container-left form input {
+  margin-bottom: 4px;
+  border: none;
+  outline: none;
+  padding: 6px;
+  border-radius: 4px;
+  color: var(--textClr);
+  background-color: var(--primaryClr);
+  font-size: 1rem;
+  width: 24rem;
+}
+
+.container-right {
+  background-color: var(--other);
+  height: 80dvh;
+  width: 30dvw;
+  border-top-right-radius: 24px;
+  border-bottom-right-radius: 24px;
+  border-top-left-radius: 13rem;
+  border-bottom-left-radius: 13rem;
+}
+
+.container-right div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 80dvh;
+  width: 24dvw;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.container-right div button {
+    border: 0.5px solid var(--textClr);
+}
