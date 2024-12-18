@@ -12,7 +12,7 @@ const DB_URL = process.env.DB_URL;
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: "http://localhost:3000/",
+    origin: "*",
     methods: ['GET', 'POST', 'DELETE', 'PUT'],
     credentials: true,
   }));

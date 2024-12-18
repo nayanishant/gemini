@@ -1,8 +1,17 @@
-import ReactLoading from 'react-loading';
+import React from "react";
+import ReactLoading from "react-loading";
 
-const loading = ({ type, color}) => {
+const Loading = ({
+  type = "bars",
+  color = "White",
+  height = 667,
+  width = 375,
+}) => {
   return (
-    <ReactLoading type={type} color={color} height={667} width={375} />
-)}
+    <div className="loading">
+      <ReactLoading type={type} color={color} height={height} width={width} />
+    </div>
+  );
+};
 
-export default loading
+export default Loading;

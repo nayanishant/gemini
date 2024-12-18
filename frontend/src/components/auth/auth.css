@@ -17,6 +17,7 @@
   text-align: center;
   margin: 8px;
   padding: 0 24px;
+  height: 340px;
 }
 
 .container-left h2 {
@@ -114,5 +115,17 @@
 }
 
 .container-right div button {
-    border: 0.5px solid var(--textClr);
+  border: 0.5px solid var(--textClr);
+}
+
+.container-left .conflict-message {
+  color: red;
+  margin-top: 5px;
+  font-size: 1rem;
+}
+
+.container-left .success-message {
+  color: green;
+  margin-top: 5px;
+  font-size: 1rem;
 }

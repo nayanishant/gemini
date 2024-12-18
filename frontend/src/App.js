@@ -4,15 +4,15 @@ import "./App.css"
 import Loading from './components/loading/loading.jsx'
 
 
-const Login = lazy(() => import('./components/auth/login')); 
+const Login = lazy(() => import('./components/auth/auth.jsx')); 
 
 function App() {
   return (
     <div className="App">
-      <Suspense fallback={< Loading />}>
+      <Suspense fallback={<Loading />}>
         <BrowserRouter>
           <Routes>
-            <Route path='/login' element={<Login />} />
+            <Route path='/auth' element={<Login />} />
           </Routes>
         </BrowserRouter>
       </Suspense>

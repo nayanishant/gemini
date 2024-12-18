@@ -1,6 +1,44 @@
+import { useState } from "react";
 import "./auth.css";
+import axios from "axios";
+import Loading from "../loading/loading";
 
-const signup = () => {
+const Signup = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [conflictError, setConflictError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const URL = "http://localhost:8070";
+
+  const handleRegistration = async (e) => {
+    e.preventDefault();
+    setSuccessMessage("");
+    setConflictError("");
+    setLoading(true); 
+    try {
+      const userData = { email, password };
+      const res = await axios.post(`${URL}/register`, userData);
+
+      if (res.status === 201) {
+        setSuccessMessage("Registration successful!");
+      } else {
+        console.log("Unexpected status:", res.status);
+        setConflictError("An unexpected error occurred.");
+      }
+    } catch (error) {
+      console.error("Cannot create new user:", error);
+
+      if (error.response && error.response.status === 409) {
+        setConflictError(error.response.data.error || "Email already exists.");
+      } else {
+        setConflictError("Failed to register. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container-left">
       <h2 className="text-clr">Sign Up</h2>
@@ -16,16 +54,30 @@ const signup = () => {
         </button>
       </div>
       <p className="text-clr">or use your email account:</p>
-      <form>
-        <input type="email" placeholder="Email" />
-        <input type="password" placeholder="Password" />
-        <a href={"/login"} className="text-clr">
-          Already have an account? Log In
-        </a>
-        <button>Sign Up</button>
+      <form method="POST">
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button onClick={handleRegistration} disabled={loading}>
+          {loading ? "Signing Up..." : "Sign Up"}
+        </button>
+        {successMessage && <p className="success-message">{successMessage}</p>}
+        {conflictError && <p className="conflict-message">{conflictError}</p>}
       </form>
+      {loading && <Loading />}
     </div>
   );
 };
 
-export default signup;
+export default Signup;

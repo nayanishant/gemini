@@ -42,3 +42,15 @@ button:hover {
   background-color: var(--textClr);
   border-color: var(--textClr);
 }
+
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--primaryClr);
+}
