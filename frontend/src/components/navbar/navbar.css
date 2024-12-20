@@ -1,0 +1,102 @@
+.nav-wrapper {
+  height: 100dvh;
+  width: 24rem;
+  padding: 8px;
+  background-color: var(--secondaryClr);
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.logo-section {
+  padding: 4px;
+}
+
+.logo-section p {
+  font-weight: 600;
+  font-size: 2rem;
+}
+
+.recent-section {
+  height: 40rem;
+  padding: 4px;
+}
+
+.recent-section .title {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+
+.recent-section ul {
+  scroll-behavior: smooth;
+  overflow-y: hidden;
+  transition: overflow-y 0.3s ease;
+  max-height: 37rem;
+}
+
+.recent-section ul li {
+  font-size: 1.1rem;
+  padding: 4px 0 4px 8px;
+  margin: 0 4px 8px 0;
+}
+
+.recent-section ul li a.active {
+  background-color: var(--tertiaryClr);
+  border-radius: 8px;
+}
+
+.recent-section ul li:hover {
+  background-color: var(--tertiaryClr);
+  border-radius: 8px;
+}
+
+.profile-section {
+  height: 8dvh;
+  padding: 4px;
+  background-color: var(--tertiaryClr);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.profile-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.name-logo {
+  height: 3.4rem;
+  width: 3.4rem;
+  background-color: var(--other);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.name-logo p {
+  font-size: 1.4rem;
+}
+
+.name p {
+  font-size: 1.1rem;
+}
+
+.logout-btn {
+  color: var(--other);
+  font-size: 1.4rem;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.logout-btn button {
+    all: unset;
+}
+
+.logout-btn button:hover {
+    color: var(--textClr);
+}

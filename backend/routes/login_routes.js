@@ -8,7 +8,7 @@ var router = express.Router();
 
 router.post("/register", userRegisterHandler);
 router.post("/login", userLoginHandler);
-router.get("/main", verifyUser, (req, res) => {
+router.get("/chat", verifyUser, (req, res) => {
   return console.log('User logged In.');
 })
 
