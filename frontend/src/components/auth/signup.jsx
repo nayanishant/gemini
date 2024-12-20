@@ -11,7 +11,7 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const URL = "http://localhost:8070";
 
-  const handleRegistration = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setSuccessMessage("");
     setConflictError("");
@@ -30,9 +30,9 @@ const Signup = () => {
       console.error("Cannot create new user:", error);
 
       if (error.response && error.response.status === 409) {
-        setConflictError(error.response.data.error || "Email already exists.");
+        setConflictError(error.response.data.error || "User already exists. Please signin.");
       } else {
-        setConflictError("Failed to register. Please try again later.");
+        setConflictError("Failed to signup. Please try again later.");
       }
     } finally {
       setLoading(false);
@@ -69,7 +69,7 @@ const Signup = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button onClick={handleRegistration} disabled={loading}>
+        <button onClick={handleSignup} disabled={loading}>
           {loading ? "Signing Up..." : "Sign Up"}
         </button>
         {successMessage && <p className="success-message">{successMessage}</p>}
