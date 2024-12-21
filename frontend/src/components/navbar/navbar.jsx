@@ -1,16 +1,24 @@
 import "./navbar.css";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { logout } from "../../redux/features/userSlice"
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../redux/features/userSlice";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const name = useSelector((state) => state.user.user.name);
+
+  const initials = name
+    ? name
+        .split(" ")
+        .map((word) => word[0])
+        .join("")
+    : "";
 
   const handleLogout = () => {
-    dispatch(logout())
     localStorage.removeItem("token");
-    navigate("/auth")
+    dispatch(logout());
+    navigate("/auth");
   };
 
   return (
@@ -35,10 +43,10 @@ const Navbar = () => {
         <div className="profile-section">
           <div className="profile-wrapper">
             <div className="name-logo">
-              <p className="text-clr">NN</p>
+              <p className="text-clr">{initials}</p>
             </div>
             <div className="name">
-              <p className="text-clr">Nishant Nayan</p>
+              <p className="text-clr">{name}</p>
             </div>
           </div>
           <div className="logout-btn">

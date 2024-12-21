@@ -4,38 +4,51 @@ import axios from "axios";
 import Loading from "../loading/loading";
 
 const Signup = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [conflictError, setConflictError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [state, setState] = useState({
+    email: "",
+    password: "",
+    name: "",
+    successMessage: "",
+    conflictError: "",
+    loading: false,
+  });
+
+  const setValues = (field, value) =>
+    setState((prevState) => ({ ...prevState, [field]: value }));
+
   const URL = "http://localhost:8070";
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    setSuccessMessage("");
-    setConflictError("");
-    setLoading(true); 
+    setValues("successMessage", "");
+    setValues("conflictError", "");
+    setValues("loading", true);
     try {
-      const userData = { email, password };
-      const res = await axios.post(`${URL}/register`, userData);
-
-      if (res.status === 201) {
-        setSuccessMessage("Registration successful!");
-      } else {
-        console.log("Unexpected status:", res.status);
-        setConflictError("An unexpected error occurred.");
+      const userData = { name: state.name, email: state.email, password: state.password };
+      await axios.post(`${URL}/register`, userData);
+      setValues(
+        "successMessage",
+        "Registration successful! Redirecting to login..."
+      );
+      if (state.successMessage) {
+        setTimeout(() => window.location.reload(), 1000);
       }
     } catch (error) {
-      console.error("Cannot create new user:", error);
+      const status = error.response?.status;
+      const message = error.response?.data?.message;
 
-      if (error.response && error.response.status === 409) {
-        setConflictError(error.response.data.error || "User already exists. Please signin.");
-      } else {
-        setConflictError("Failed to signup. Please try again later.");
-      }
+      setValues(
+        "conflictError",
+        status === 409
+          ? message || "User already exists."
+          : "Signup failed, try again..."
+      );
+
+      setTimeout(() => {
+        setValues("conflictError", "");
+      }, 2000);
     } finally {
-      setLoading(false);
+      setValues("loading", false);
     }
   };
 
@@ -55,27 +68,38 @@ const Signup = () => {
       </div>
       <p className="text-clr">or use your email account:</p>
       <form method="POST">
+      <input
+          type="text"
+          placeholder="Name"
+          value={state.name}
+          onChange={(e) => setValues("name", e.target.value)}
+          required
+        />
         <input
           type="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={state.email}
+          onChange={(e) => setValues("email", e.target.value)}
           required
         />
         <input
           type="password"
           placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={state.password}
+          onChange={(e) => setValues("password", e.target.value)}
           required
         />
-        <button onClick={handleSignup} disabled={loading}>
-          {loading ? "Signing Up..." : "Sign Up"}
+        <button onClick={handleSignup} disabled={state.loading}>
+          {state.loading ? "Signing Up..." : "Sign Up"}
         </button>
-        {successMessage && <p className="success-message">{successMessage}</p>}
-        {conflictError && <p className="conflict-message">{conflictError}</p>}
+        {state.successMessage && (
+          <p className="success-message">{state.successMessage}</p>
+        )}
+        {state.conflictError && (
+          <p className="conflict-message">{state.conflictError}</p>
+        )}
       </form>
-      {loading && <Loading />}
+      {state.loading && <Loading />}
     </div>
   );
 };

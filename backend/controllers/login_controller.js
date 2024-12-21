@@ -4,7 +4,7 @@ const userModel = require("../models/login_model");
 
 const userRegisterHandler = async (req, res) => {
   // Extract `email` and `password` from the request body using destructuring
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
 
   try {
     // validating input
@@ -31,10 +31,11 @@ const userRegisterHandler = async (req, res) => {
 
     // Creating new user
     const newUser = await userModel.create({
+      name,
       email,
       password: hashedPassword,
     });
-    const response = await newUser.save();
+    await newUser.save();
 
     return res.status(201).json({
       message: "User successfully created!",
@@ -62,13 +63,13 @@ const userLoginHandler = async (req, res) => {
 
     // Generate JWT token with user ID and email
     const token = jwt.sign(
-      { _id: user._id, email: user.email },
+      { _id: user._id, name: user.name, email: user.email },
       process.env.SECRET_KEY,
       { expiresIn: "1h" }
     );
 
     // Send successful response with limited user data and token
-    const sanitizedUser = { _id: user._id, email: user.email };
+    const sanitizedUser = { _id: user._id,name: user.name, email: user.email };
 
     return res.status(200).json({
       message: "Login successful",
