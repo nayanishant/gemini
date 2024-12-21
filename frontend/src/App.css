@@ -55,6 +55,11 @@ button:hover {
   background-color: var(--primaryClr);
 }
 
+.logout-btn button,
+.send-btn button {
+  all: unset;
+}
+
 ::-webkit-scrollbar {
   width: 5px;
 }

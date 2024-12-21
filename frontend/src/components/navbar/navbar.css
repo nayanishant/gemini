@@ -8,6 +8,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-right: 8px;
 }
 
 .logo-section {
@@ -31,7 +32,7 @@
 
 .recent-section ul {
   scroll-behavior: smooth;
-  overflow-y: hidden;
+  overflow-y: auto;
   transition: overflow-y 0.3s ease;
   max-height: 37rem;
 }
@@ -91,10 +92,6 @@
   font-size: 1.4rem;
   cursor: pointer;
   margin-right: 8px;
-}
-
-.logout-btn button {
-  all: unset;
 }
 
 .logout-btn button:hover {
