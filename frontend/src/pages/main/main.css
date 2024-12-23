@@ -21,16 +21,20 @@
   padding: 8px;
 }
 
+.response-container div {
+    margin-bottom: 12px;
+}
+
+.user,
+.user-req {
+  max-height: 10rem;
+  min-height: 3rem;
+}
+
 .user {
   display: flex;
-  height: 4rem;
-  max-height: 10rem;
-  min-height: 4rem;
   align-items: baseline;
-  scroll-behavior: smooth;
-  overflow-y: hidden;
-  transition: overflow-y 0.3s ease;
-  margin-bottom: 8px;
+  margin-bottom: 32px;
 }
 
 .user .name-logo {
@@ -41,21 +45,39 @@
 
 .user .name-logo p {
   font-size: 1rem;
+  padding: 2px;
+}
+
+.user-req {
+  padding-right: 4px;
+}
+
+.user-req,
+.model p {
+  scroll-behavior: smooth;
+  overflow-y: auto;
+  transition: overflow-y 0.3s ease;
+  letter-spacing: 1px;
+  line-height: 25px;
+  background-color: var(--secondaryClr);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.model,
+.model p {
+  max-height: 12rem;
+  min-height: 4rem;
 }
 
 .model {
   display: flex;
-  max-height: 12rem;
-  min-height: 6rem;
   align-items: baseline;
-  scroll-behavior: smooth;
-  overflow-y: hidden;
-  transition: overflow-y 0.3s ease;
 }
 
 .model i {
   color: var(--other);
-  margin-right: 8px;
+  margin-right: 12px;
   font-size: 24px;
 }
 

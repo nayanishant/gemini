@@ -1,8 +1,16 @@
+import { useState, useEffect } from "react";
 import NavBar from "../../components/navbar/navbar";
 import "./main.css";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Main = () => {
+  const [state, setState] = useState({
+    prompt: "",
+    response: "",
+    loading: false,
+    history: [],
+  });
   const name = useSelector((state) => state.user.user.name);
 
   const initials = name
@@ -12,6 +20,41 @@ const Main = () => {
         .join("")
     : "";
 
+  const URL = "http://localhost:8070";
+
+  const handleResponses = async () => {
+    setState((prevState) => ({ ...prevState, loading: true }));
+    const { prompt, history } = state;
+
+    try {
+      const res = await axios.post(`${URL}/app`, { prompt, history });
+      setState((prevState) => ({
+        ...prevState,
+        loading: false,
+        response: res.data.response,
+        history: res.data.history,
+      }));
+      console.log("History", state.history)
+    } catch (error) {
+      console.error("Error generating text:", error);
+      setState((prevState) => ({ ...prevState, loading: false }));
+    }
+  };
+
+  useEffect(() => {
+    const storedHistory = localStorage.getItem("chatHistory");
+    if (storedHistory) {
+      setState((prevState) => ({
+        ...prevState,
+        history: JSON.parse(storedHistory),
+      }));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("chatHistory", JSON.stringify(state.history));
+  }, [state.history]);
+
   return (
     <>
       <div className="main-wrapper">
@@ -19,25 +62,34 @@ const Main = () => {
         <div className="wrapper-right">
           <div className="response-container">
             <div>
-              <div className="user">
-                <div className="name-logo">
-                  <p className="text-clr">{initials}</p>
+              {state.history.length > 0 &&
+                state.history.map((el, index) => (
+                  <div className="user" key={index}>
+                    <div className="name-logo">
+                      <p className="text-clr">{initials}</p>
+                    </div>
+                    {el.parts.map((part, partIndex) => (
+                      <p className="user-req text-clr" key={partIndex}>{part.text}</p>
+                    ))}
+                  </div>
+                ))}
+              {state.response && (
+                <div className="model">
+                  <i className="fa-solid fa-wand-magic-sparkles"></i>
+                  <p className="text-clr">{state.response}</p>
                 </div>
-                <p className="text-clr">Hi, How are you?</p>
-              </div>
-              <div className="model">
-                <i className="fa-solid fa-wand-magic-sparkles"></i>
-                <p className="text-clr">
-                  I am doing well, thank you for asking! How are you today?
-                </p>
-              </div>
+              )}
             </div>
           </div>
           <div className="input-container">
-            <textarea name="search"></textarea>
+            <textarea
+              name="search"
+              value={state.prompt}
+              onChange={(e) => setState({ ...state, prompt: e.target.value })}
+            ></textarea>
             <div className="send-btn">
-              <button>
-                <i class="fa-solid fa-paper-plane"></i>
+              <button onClick={handleResponses} disabled={state.loading}>
+                <i className="fa-solid fa-paper-plane"></i>
               </button>
             </div>
           </div>
