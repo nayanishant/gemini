@@ -21,8 +21,8 @@
   padding: 8px;
 }
 
-.response-container div {
-    margin-bottom: 12px;
+.response-container .chat-container {
+    margin-bottom: 28px;
 }
 
 .user,
@@ -31,10 +31,11 @@
   min-height: 3rem;
 }
 
-.user {
+.user,
+.model {
   display: flex;
   align-items: baseline;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
 }
 
 .user .name-logo {
@@ -66,13 +67,8 @@
 
 .model,
 .model p {
-  max-height: 12rem;
-  min-height: 4rem;
-}
-
-.model {
-  display: flex;
-  align-items: baseline;
+  max-height: fit-content;
+  min-height: 3rem;
 }
 
 .model i {
