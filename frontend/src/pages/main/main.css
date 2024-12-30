@@ -113,3 +113,15 @@ textarea:focus {
 .send-btn button:hover {
   color: var(--textClr);
 }
+
+.chat-loader {
+  color: var(--textClr);
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  background-color: var(--other);
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px auto;
+  width: fit-content;
+}

@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import NavBar from "../../components/navbar/navbar";
 import "./main.css";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { Remarkable } from "remarkable";
+
+const md = new Remarkable();
 
 const Main = () => {
   const [state, setState] = useState({
@@ -11,7 +14,8 @@ const Main = () => {
     loading: false,
     history: [],
   });
-  const [sessionId, setSessionId] = useState(""); // Added sessionId state
+  const [sessionId, setSessionId] = useState("");
+  const chatContainerRef = useRef(null);
 
   const name = useSelector((state) => state.user.user.name);
 
@@ -24,13 +28,19 @@ const Main = () => {
 
   const URL = "http://localhost:8070";
 
+  const token = localStorage.getItem("token");
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
   const handleResponses = async () => {
     setState((prevState) => ({ ...prevState, loading: true }));
     const { prompt } = state;
 
     try {
-      // Send the prompt along with the sessionId to the server
-      const res = await axios.post(`${URL}/app`, { prompt, sessionId });
+      const res = await axios.post(`${URL}/app`, { prompt, sessionId }, config);
       setState((prevState) => ({
         ...prevState,
         loading: false,
@@ -49,27 +59,27 @@ const Main = () => {
   };
 
   useEffect(() => {
-    // Generate or fetch sessionId
     const storedSessionId = localStorage.getItem("sessionId");
     if (storedSessionId) {
       setSessionId(storedSessionId);
     } else {
-      const newSessionId = Math.random().toString(36).substring(2, 15); // Generate random sessionId
+      const newSessionId = Math.random().toString(36).substring(2, 15);
       localStorage.setItem("sessionId", newSessionId);
       setSessionId(newSessionId);
     }
 
-    // Load session history from server
     const fetchHistory = async () => {
       try {
         const res = await axios.get(
-          `${URL}/history/${storedSessionId || sessionId}`
+          `${URL}/history/${storedSessionId || sessionId}`,
+          config
         );
         setState((prevState) => ({
           ...prevState,
           history: res.data.history.map((entry) => ({
             role: entry.role,
-            text: entry.parts[0]?.text || "",
+            text: entry.message,
+            createdAt: entry.createdAt,
           })),
         }));
       } catch (error) {
@@ -80,34 +90,52 @@ const Main = () => {
     fetchHistory();
   }, [sessionId]);
 
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [state.history]);
+
   return (
     <>
       <div className="main-wrapper">
         <NavBar />
         <div className="wrapper-right">
-          <div className="response-container">
+          <div className="response-container" ref={chatContainerRef}>
             <div className="chat-container">
-              {state.history.length > 0 &&
-                state.history.map((el, index) => (
-                  <div
-                    className={el.role === "user" ? "user" : "model"}
-                    key={index}
-                  >
-                    <div className={el.role === "user" ? "name-logo" : ""}>
-                      <div className="text-clr">
-                        {el.role === "user" ? (
-                          initials
-                        ) : (
-                          <i className="fa-solid fa-wand-magic-sparkles"></i>
-                        )}
+              {state.history.length > 0 && (
+                <>
+                  {state.history.map((el, index) => (
+                    <div
+                      className={el.role === "user" ? "user" : "model"}
+                      key={index}
+                    >
+                      <div className={el.role === "user" ? "name-logo" : ""}>
+                        <div className="text-clr">
+                          {el.role === "user" ? (
+                            initials
+                          ) : (
+                            <i className="fa-solid fa-wand-magic-sparkles"></i>
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <p
+                          className="user-req text-clr"
+                          dangerouslySetInnerHTML={{
+                            __html: md.render(el.text || ""),
+                          }}
+                        ></p>
                       </div>
                     </div>
-                    <div>
-                      <p className="user-req text-clr">{el.text}</p>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </>
+              )}
             </div>
+            {state.loading && (
+              <p className="chat-loader">Generating Response...</p>
+            )}
           </div>
           <div className="input-container">
             <textarea
