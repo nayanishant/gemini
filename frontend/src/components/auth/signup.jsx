@@ -16,7 +16,7 @@ const Signup = () => {
   const setValues = (field, value) =>
     setState((prevState) => ({ ...prevState, [field]: value }));
 
-  const URL = "http://localhost:8070";
+  const URL = process.env.REACT_APP_NODE_URL;
 
   const handleSignup = async (e) => {
     e.preventDefault();

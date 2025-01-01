@@ -16,7 +16,7 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const URL = "http://localhost:8070";
+  const URL = process.env.REACT_APP_NODE_URL;
 
   const handleSignin = async (e) => {
     e.preventDefault();

@@ -26,7 +26,7 @@ const Main = () => {
         .join("")
     : "";
 
-  const URL = "http://localhost:8070";
+  const URL = process.env.REACT_APP_NODE_URL;
 
   const token = localStorage.getItem("token");
   const config = {
@@ -35,21 +35,37 @@ const Main = () => {
     },
   };
 
+  //history funciton
+  const fetchHistory = async (currentSessionId) => {
+    try {
+      const res = await axios.get(`${URL}/history/${currentSessionId}`, config);
+      setState((prevState) => ({
+        ...prevState,
+        history: res.data.history.map((entry) => ({
+          role: entry.role,
+          text: entry.parts?.[0]?.text || entry.message,
+          createdAt: entry.createdAt,
+        })),
+      }));
+    } catch (error) {
+      console.error("Error fetching chat history:", error);
+    }
+  };
+  // generate text function
   const handleResponses = async () => {
     setState((prevState) => ({ ...prevState, loading: true }));
     const { prompt } = state;
 
     try {
       const res = await axios.post(`${URL}/app`, { prompt, sessionId }, config);
+
+      const userMessage = { role: "user", text: prompt };
+      const aiResponse = { role: "model", text: res.data.response };
+
       setState((prevState) => ({
         ...prevState,
         loading: false,
-        response: res.data.response,
-        history: [
-          ...prevState.history,
-          { role: "user", text: prompt },
-          { role: "model", text: res.data.response },
-        ],
+        history: [...prevState.history, userMessage, aiResponse],
         prompt: "",
       }));
     } catch (error) {
@@ -58,43 +74,29 @@ const Main = () => {
     }
   };
 
+  // Scroll to the bottom of the chat container
+  const scrollToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  };
+
   useEffect(() => {
     const storedSessionId = localStorage.getItem("sessionId");
     if (storedSessionId) {
       setSessionId(storedSessionId);
+      fetchHistory(storedSessionId);
     } else {
       const newSessionId = Math.random().toString(36).substring(2, 15);
       localStorage.setItem("sessionId", newSessionId);
       setSessionId(newSessionId);
     }
+  }, []);
 
-    const fetchHistory = async () => {
-      try {
-        const res = await axios.get(
-          `${URL}/history/${storedSessionId || sessionId}`,
-          config
-        );
-        setState((prevState) => ({
-          ...prevState,
-          history: res.data.history.map((entry) => ({
-            role: entry.role,
-            text: entry.message,
-            createdAt: entry.createdAt,
-          })),
-        }));
-      } catch (error) {
-        console.error("Error fetching chat history:", error);
-      }
-    };
-
-    fetchHistory();
-  }, [sessionId]);
-
+  // Scroll to the bottom when history updates
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
-    }
+    scrollToBottom();
   }, [state.history]);
 
   return (
