@@ -17,6 +17,7 @@ const Login = () => {
   const dispatch = useDispatch();
 
   const URL = process.env.REACT_APP_NODE_URL;
+  console.log(URL);
 
   const handleSignin = async (e) => {
     e.preventDefault();
