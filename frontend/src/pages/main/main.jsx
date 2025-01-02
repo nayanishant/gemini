@@ -17,10 +17,9 @@ const Main = () => {
   const [sessionId, setSessionId] = useState("");
   const chatContainerRef = useRef(null);
 
-  const name = useSelector((state) => state.user.user.name);
-
-  const initials = name
-    ? name
+  const user = useSelector((state) => state.user.user);
+  const initials = user.name
+    ? user.name
         .split(" ")
         .map((word) => word[0])
         .join("")
@@ -36,9 +35,9 @@ const Main = () => {
   };
 
   //history funciton
-  const fetchHistory = async (currentSessionId) => {
+  const fetchHistory = async (userID) => {
     try {
-      const res = await axios.get(`${URL}/history/${currentSessionId}`, config);
+      const res = await axios.get(`${URL}/history/${userID}`, config);
       setState((prevState) => ({
         ...prevState,
         history: res.data.history.map((entry) => ({
@@ -86,7 +85,7 @@ const Main = () => {
     const storedSessionId = localStorage.getItem("sessionId");
     if (storedSessionId) {
       setSessionId(storedSessionId);
-      fetchHistory(storedSessionId);
+      fetchHistory(user._id);
     } else {
       const newSessionId = Math.random().toString(36).substring(2, 15);
       localStorage.setItem("sessionId", newSessionId);

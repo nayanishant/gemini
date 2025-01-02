@@ -35,11 +35,14 @@ const generateText = async (req, res) => {
 
     if (
       !formattedHistory.every(
-        (entry) => entry.parts && Array.isArray(entry.parts) && entry.parts[0]?.text
+        (entry) =>
+          entry.parts && Array.isArray(entry.parts) && entry.parts[0]?.text
       )
     ) {
       console.error("Invalid history format");
-      return res.status(500).json({ error: "Server error: Invalid history format" });
+      return res
+        .status(500)
+        .json({ error: "Server error: Invalid history format" });
     }
 
     const chat = model.startChat({ history: formattedHistory });
@@ -82,17 +85,16 @@ const generateText = async (req, res) => {
   }
 };
 
-
 const historyHandler = async (req, res) => {
-  const { sessionId } = req.params;
+  const { userId } = req.params;
   const { limit } = req.query;
 
   try {
-    if (!sessionId || typeof sessionId !== "string") {
-      return res.status(400).json({ error: "Invalid or missing sessionId" });
+    if (!userId || typeof userId !== "string") {
+      return res.status(400).json({ error: "Invalid or missing userId" });
     }
 
-    const query = History.find({ sessionId }).sort({ createdAt: 1 });
+    const query = History.find({ userId }).sort({ createdAt: 1 });
 
     if (limit) {
       const parsedLimit = parseInt(limit, 10);
@@ -110,11 +112,14 @@ const historyHandler = async (req, res) => {
       createdAt: entry.createdAt,
     }));
 
-    res.json({ sessionId, history: formattedHistory });
+    res.json({ userId, history: formattedHistory });
   } catch (error) {
     console.error("Error fetching history:", error);
     res.status(500).json({ error: "An unexpected error occurred." });
   }
 };
 
-module.exports = { generateText, historyHandler };
+module.exports = { 
+  generateText,
+  historyHandler 
+};
