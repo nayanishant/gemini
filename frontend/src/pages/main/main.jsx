@@ -98,7 +98,7 @@ const Main = () => {
     } else {
       console.warn("User ID is not available yet.");
     }
-  }, [user._id]);  
+  }, []);  
 
   // Scroll to the bottom when history updates
   useEffect(() => {
