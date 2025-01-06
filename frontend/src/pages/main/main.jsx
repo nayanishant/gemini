@@ -82,16 +82,22 @@ const Main = () => {
   };
 
   useEffect(() => {
-    const storedSessionId = localStorage.getItem("sessionId");
-    if (storedSessionId) {
-      setSessionId(storedSessionId);
-      fetchHistory(user._id);
+    if (user._id) {
+      const storedSessionId = localStorage.getItem("sessionId");
+      if (storedSessionId) {
+        console.log("Using stored session ID:", storedSessionId);
+        setSessionId(storedSessionId);
+        fetchHistory(user._id);
+      } else {
+        const newSessionId = Math.random().toString(36).substring(2, 15);
+        localStorage.setItem("sessionId", newSessionId);
+        console.log("Created new session ID:", newSessionId);
+        setSessionId(newSessionId);
+      }
     } else {
-      const newSessionId = Math.random().toString(36).substring(2, 15);
-      localStorage.setItem("sessionId", newSessionId);
-      setSessionId(newSessionId);
+      console.warn("User ID is not available yet.");
     }
-  }, []);
+  }, [user._id]);  
 
   // Scroll to the bottom when history updates
   useEffect(() => {
