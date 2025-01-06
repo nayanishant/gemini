@@ -82,6 +82,7 @@ const Main = () => {
   };
 
   useEffect(() => {
+    console.log("User ID in useEffect:", user._id);
     if (user._id) {
       const storedSessionId = localStorage.getItem("sessionId");
       if (storedSessionId) {
