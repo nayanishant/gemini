@@ -1,14 +1,41 @@
 .nav-wrapper {
   height: 100dvh;
-  width: 24rem;
+  width: 16.5rem;
   padding: 8px;
   background-color: var(--secondaryClr);
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-right: 8px;
+}
+
+.extreme-top-section{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.nav-top-icons{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 35px;
+  height: 35px;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.nav-top-icons:hover{
+  background-color: var(--tertiaryClr);
+  
+}
+
+.nav-icon{
+  height:25px;
+  font-size: 1.6rem;
 }
 
 .logo-section {
@@ -38,24 +65,59 @@
 }
 
 .recent-section ul li {
-  font-size: 1.1rem;
-  padding: 4px 0 4px 8px;
-  margin: 0 4px 8px 0;
+  max-width: 350px;
+  text-overflow: ellipsis;
+  font-weight: normal;
+  font-size: 16px;
+  padding: 0px 0 0px 8px;
+  margin: 0 4px 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
+.chat-session-name{
+  padding: 0 14px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.recent-section ul li a.active {
+.nav-list-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 4px;
+}
+
+.li-icon{
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: var(--iconClr);
+}
+.li-icon:hover{
+  color: white;
+}
+
+/* .recent-section ul li a.active {
   background-color: var(--tertiaryClr);
   border-radius: 8px;
-}
+} */
 
 .recent-section ul li:hover {
   background-color: var(--tertiaryClr);
   border-radius: 8px;
 }
 
+.day-heading{
+  font-weight: 800;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
 .profile-section {
   height: 8dvh;
   padding: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
   background-color: var(--tertiaryClr);
   border-radius: 8px;
   display: flex;
@@ -70,8 +132,8 @@
 }
 
 .name-logo {
-  height: 3.4rem;
-  width: 3.4rem;
+  height: 2.5rem;
+  width: 2.5rem;
   background-color: var(--other);
   border-radius: 50%;
   display: flex;
@@ -80,20 +142,45 @@
 }
 
 .name-logo p {
-  font-size: 1.4rem;
-}
-
-.name p {
   font-size: 1.1rem;
 }
 
+.name p {
+  font-size: 1rem;
+}
+
 .logout-btn {
-  color: var(--other);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* color: var(--other); */
+  color: #d9d9d9;
   font-size: 1.4rem;
   cursor: pointer;
   margin-right: 8px;
+  /* background: #000; */
+  margin-top: 5px;
 }
 
 .logout-btn button:hover {
   color: var(--textClr);
+}
+
+.css-1toxriw-MuiList-root-MuiMenu-list {
+  list-style: none;
+  margin: 0;
+  position: relative;
+  outline: 0;
+  border: 2px solid gray;
+  border-radius: 12px;
+  background-color: #525252;
+  padding: 8px 8px 8px 8px !important;
+}
+
+.css-1rju2q6-MuiButtonBase-root-MuiMenuItem-root {
+  min-height: auto;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
 }

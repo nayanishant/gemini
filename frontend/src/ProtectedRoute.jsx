@@ -27,7 +27,8 @@ const ProtectedRoute = () => {
     <Suspense fallback={<Loading />}>
       <Routes>
         <Route path="/" element={<SignIn />} />
-        <Route path="/chat" element={userInfo.isLoggedIn ? <Main /> : <Navigate to='/' />} />
+        <Route path="/chat/" element={<Main />} />
+        <Route path="/chat/:sessionId" element={userInfo.isLoggedIn ? <Main /> : <Navigate to='/' />} />
       </Routes>
     </Suspense>
   );

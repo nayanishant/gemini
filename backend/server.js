@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 var mongoose = require("mongoose");
 var loginRoutes = require("./routes/login_routes");
 var genAIRoutes = require("./routes/genAI_routes")
+var chatRoutes = require("./routes/chat_routes")
 
 dotenv.config();
 const port = process.env.PORT || 8000;
@@ -19,6 +20,7 @@ app.use(cors({
 
 app.use(loginRoutes);
 app.use(genAIRoutes);
+app.use("/api/v1", chatRoutes);
 
 const startServer = async () => {
   try {
