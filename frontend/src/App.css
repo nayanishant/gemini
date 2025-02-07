@@ -3,6 +3,7 @@
   --secondaryClr: #414141;
   --tertiaryClr: #313131;
   --textClr: #eeeeee;
+  --iconClr: #d9d9d9;
   --other: #ca3e47;
 }
 
@@ -22,6 +23,10 @@
 
 .text-clr {
   color: var(--textClr);
+}
+
+.icon-clr{
+  color: var(--iconClr)
 }
 
 button {

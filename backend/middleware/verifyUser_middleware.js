@@ -4,6 +4,7 @@ const userModel = require("../models/login_model");
 const verifyUser_middleware = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
+    // console.log("authHeader from middleware", authHeader);
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       console.error("Authorization header missing or invalid");
       return res
@@ -12,8 +13,6 @@ const verifyUser_middleware = async (req, res, next) => {
     }
 
     const token = authHeader.replace("Bearer ", "");
-
-    
 
     const payload = jwt.verify(token, process.env.SECRET_KEY);
 

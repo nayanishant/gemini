@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const History = require("../models/history_model");
+const chat_messages_model = require("../models/chat_messages_model");
 
 const generateText = async (req, res) => {
   const { prompt, sessionId } = req.body;
@@ -25,7 +26,7 @@ const generateText = async (req, res) => {
 
     const genAI = new GoogleGenerativeAI(process.env.API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
+    
     const history = await History.find({ sessionId }).sort({ createdAt: 1 });
 
     const formattedHistory = history.map((entry) => ({
@@ -59,14 +60,28 @@ const generateText = async (req, res) => {
       return res.status(500).json({ error: "Error streaming response" });
     }
 
-    await History.create({
+    // await History.create({
+    //   userId: req.user.id,
+    //   sessionId,
+    //   role: "user",
+    //   message: prompt,
+    // });
+
+    // await History.create({
+    //   userId: req.user.id,
+    //   sessionId,
+    //   role: "model",
+    //   message: responseText,
+    // });
+
+    await chat_messages_model.create({
       userId: req.user.id,
       sessionId,
       role: "user",
       message: prompt,
     });
 
-    await History.create({
+    await chat_messages_model.create({
       userId: req.user.id,
       sessionId,
       role: "model",
@@ -85,24 +100,58 @@ const generateText = async (req, res) => {
   }
 };
 
+// const historyHandler = async (req, res) => {
+//   const { userId } = req.params;
+//   const { limit } = req.query;
+
+//   try {
+//     if (!userId || typeof userId !== "string") {
+//       return res.status(400).json({ error: "Invalid or missing userId" });
+//     }
+
+//     const query = History.find({ userId }).sort({ createdAt: 1 });
+
+//     if (limit) {
+//       const parsedLimit = parseInt(limit, 10);
+//       if (isNaN(parsedLimit) || parsedLimit <= 0) {
+//         return res.status(400).json({ error: "Invalid limit value" });
+//       }
+//       query.limit(parsedLimit);
+//     }
+
+//     const history = await query;
+
+//     const formattedHistory = history.map((entry) => ({
+//       role: entry.role,
+//       parts: [{ text: entry.message }],
+//       createdAt: entry.createdAt,
+//     }));
+
+//     res.json({ userId, history: formattedHistory });
+//   } catch (error) {
+//     console.error("Error fetching history:", error);
+//     res.status(500).json({ error: "An unexpected error occurred." });
+//   }
+// };
+
 const historyHandler = async (req, res) => {
-  const { userId } = req.params;
+  const { sessionId } = req.params;
   const { limit } = req.query;
 
   try {
-    if (!userId || typeof userId !== "string") {
-      return res.status(400).json({ error: "Invalid or missing userId" });
+    if (!sessionId || typeof sessionId !== "string") {
+      return res.status(400).json({ error: "Invalid or missing sessionId" });
     }
 
-    const query = History.find({ userId }).sort({ createdAt: 1 });
+    const query = chat_messages_model.find({ sessionId }).sort({ createdAt: 1 });
 
-    if (limit) {
-      const parsedLimit = parseInt(limit, 10);
-      if (isNaN(parsedLimit) || parsedLimit <= 0) {
-        return res.status(400).json({ error: "Invalid limit value" });
-      }
-      query.limit(parsedLimit);
-    }
+    // if (limit) {
+    //   const parsedLimit = parseInt(limit, 10);
+    //   if (isNaN(parsedLimit) || parsedLimit <= 0) {
+    //     return res.status(400).json({ error: "Invalid limit value" });
+    //   }
+    //   query.limit(parsedLimit);
+    // }
 
     const history = await query;
 
@@ -112,14 +161,14 @@ const historyHandler = async (req, res) => {
       createdAt: entry.createdAt,
     }));
 
-    res.json({ userId, history: formattedHistory });
+    return res.status(200).json({ sessionId, history: formattedHistory });
   } catch (error) {
     console.error("Error fetching history:", error);
-    res.status(500).json({ error: "An unexpected error occurred." });
+    return res.status(400).json({ error: "An unexpected error occurred." });
   }
 };
 
-module.exports = { 
+module.exports = {
   generateText,
-  historyHandler 
+  historyHandler,
 };
