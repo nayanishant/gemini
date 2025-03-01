@@ -9,15 +9,21 @@ import { IoIosLogOut } from "react-icons/io";
 import { TbLayoutSidebarLeftCollapse } from "react-icons/tb";
 import { RiApps2AddLine } from "react-icons/ri";
 import { IoIosMore } from "react-icons/io";
-import { FormControl, IconButton, Menu, MenuItem, styled } from "@mui/material";
+import { IconButton, Menu, MenuItem, styled, Tooltip } from "@mui/material";
+import { toast } from "sonner";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const { user } = useSelector((state) => state.user);
+
   const [chatSessions, setChatSessions] = useState([]);
   const [chatHistory, setChatHistory] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedSession, setSelectedSession] = useState(null);
+  const [sessionName, setSessionName] = useState(" ");
+  const [enableInput, setEnableInput] = useState(false);
 
   const CustomMenu = styled(Menu)({
     "& .MuiPaper-root": {
@@ -27,7 +33,7 @@ const Navbar = () => {
       boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
     },
     "& .MuiMenuItem-root:hover": {
-      backgroundColor: "#313131",  
+      backgroundColor: "#313131",
     },
   });
 
@@ -92,10 +98,60 @@ const Navbar = () => {
     }
   };
 
+  //Function to delete a chat session if it
+  const deleteChatSession = async (sessionId) => {
+    try {
+      const resp = await axios.delete(
+        `${process.env.REACT_APP_NODE_URL}/api/v1/delete-chat-session/${sessionId}`,
+        config
+      );
+      toast.success(resp?.data?.message);
+
+      setChatSessions((prevChatSessions) =>
+        prevChatSessions.filter((session) => session.sessionId !== sessionId)
+      );
+    } catch (err) {
+      console.log(err);
+      toast.error("There's been a glitch, please try again later");
+    }
+  };
+
+  //Function to rename a chat session
+  const renameChatSession = async (sessionId) => {
+    const data = {
+      sessionId: sessionId,
+      userId: user._id,
+      chatTitle: sessionName,
+    };
+    try {
+      setEnableInput(true);
+      const resp = await axios.post(
+        `${process.env.REACT_APP_NODE_URL}/api/vi/update-chat-session-name`,
+        data,
+        config
+      );
+      toast.promise(resp, {
+        success: resp?.data?.message,
+        loading: "Updating chat session name",
+        error: "Error updating chat session name",
+      });
+      setChatSessions((prev) =>
+        prev.map((session) =>
+          session.sessionId === sessionId
+            ? { ...session, chatTitle: sessionName }
+            : session
+        )
+      );
+      setEnableInput(false);
+    } catch (err) {
+      console.error("error updating chat session name", err);
+    }
+  };
+
   //Fetch all chat sessions by User_id
   useEffect(() => {
     const fetchAllChats = async () => {
-      if (!user?._id) return;
+      if (!user?._id || !token) return;
       try {
         const response = await axios.post(
           `${process.env.REACT_APP_NODE_URL}/api/v1/find-all-chats`,
@@ -109,7 +165,7 @@ const Navbar = () => {
     };
 
     fetchAllChats();
-  }, [user?._id]);
+  }, [user?._id, token]);
 
   //Group chats based on day
   const groupedChats = useMemo(
@@ -119,51 +175,16 @@ const Navbar = () => {
 
   const handleClick = (event, sessionId) => {
     setAnchorEl(event.currentTarget);
-    // setSelectedSession(sessionId);
+    setSelectedSession(sessionId);
   };
 
   const handleClose = () => {
     setAnchorEl(null);
-    // setSelectedSession(null);
+    setSelectedSession(null);
   };
 
   return (
     <>
-      {/* <div className="nav-wrapper">
-        <div className="logo-section">
-          <p className="text-clr">LOGO</p>
-        </div>
-        <div className="recent-section">
-          <p className="text-clr title">Recents</p>
-          <ul>
-            <li>
-              <NavLink
-                href="www.google.com"
-                className={({ isActive }) => (isActive ? "active" : "")}
-              >
-                <p className="text-clr">Chat 1</p>
-              </NavLink>
-            </li>
-          </ul>
-        </div>
-        <div className="profile-section">
-          <div className="profile-wrapper">
-            <div className="name-logo">
-              <p className="text-clr">{initials}</p>
-            </div>
-            <div className="name">
-              <p className="text-clr">{name}</p>
-            </div>
-          </div>
-          <div className="logout-btn">
-            <button onClick={handleLogout}>
-              <i className="fa-solid fa-right-from-bracket"></i>
-            </button>
-          </div>
-        </div>
-      </div> */}
-
-
       <div className="nav-wrapper">
         <div className="extreme-top-section">
           <div className="collapse nav-top-icons">
@@ -197,22 +218,34 @@ const Navbar = () => {
                           onClick={() => fetchHistory(session.sessionId)}
                           // activeclassname="active"
                         >
-                          <p className="text-clr chat-session-name">
-                            {session.chatTitle
-                              ? session.chatTitle
-                              : "Untitled chat"}
-                          </p>
+                          {enableInput ? (
+                            <input
+                              type="text"
+                              value={sessionName}
+                              onChange={(e) => setSessionName(e.target.value)}
+                              onBlur={() =>
+                                renameChatSession(session.sessionId)
+                              }
+                              autoFocus
+                            />
+                          ) : (
+                            <p className="text-clr chat-session-name">
+                              {session.chatTitle
+                                ? session.chatTitle
+                                : "Untitled chat"}
+                            </p>
+                          )}
                         </NavLink>
                         <IconButton
                           onClick={(event) =>
                             handleClick(event, session.sessionId)
                           }
                           sx={{
-                            color: '#d9d9d9',
-                            '&:hover': {
-                              color: 'white',
-                              background:'none'
-                            }
+                            color: "#d9d9d9",
+                            "&:hover": {
+                              color: "white",
+                              background: "none",
+                            },
                           }}
                         >
                           <IoIosMore />
@@ -224,17 +257,27 @@ const Navbar = () => {
                           open={Boolean(anchorEl)}
                           onClose={handleClose}
                         >
-                          <MenuItem
-                            onClick={() => {
-                              // handleRename(selectedSession);
-                              handleClose();
-                            }}
+                          <Tooltip
+                            title="Renaming a chat is not permitted!"
+                            followCursor
+                            sx={{ zIndex: "99999" , color: "blue"}}
                           >
-                            Rename Chat
-                          </MenuItem>
+                            <span>
+
+                            <MenuItem
+                              disabled
+                              onClick={() => {
+                                renameChatSession(selectedSession);
+                                handleClose();
+                              }}
+                              >
+                              Rename Chat
+                            </MenuItem>
+                              </span>
+                          </Tooltip>
                           <MenuItem
                             onClick={() => {
-                              // handleDelete(selectedSession);
+                              deleteChatSession(selectedSession);
                               handleClose();
                             }}
                           >

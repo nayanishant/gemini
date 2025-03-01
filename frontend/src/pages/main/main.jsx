@@ -3,12 +3,13 @@ import NavBar from "../../components/navbar/navbar";
 import "./main.css";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { Remarkable } from "remarkable";
 import { useNavigate } from "react-router-dom";
-import { deleteChatSession } from "../../utils/chat_session_functionalities";
 import config from "../../utils/config";
 
-const md = new Remarkable();
+//Markdown
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 
 const Main = () => {
   const [state, setState] = useState({
@@ -47,15 +48,11 @@ const Main = () => {
         history: chatHistory,
       }));
 
-      // if (chatHistory.length === 0) {
-      //   await deleteChatSession(sessionId);
-      //   console.log("No chats found!!");
-      // }
     } catch (error) {
       console.error("Error fetching chat history:", error);
     }
   };
-  
+
   // generate text function
   // const handleResponses = async () => {
   //   setState((prevState) => ({ ...prevState, loading: true }));
@@ -78,6 +75,7 @@ const Main = () => {
   //     setState((prevState) => ({ ...prevState, loading: false }));
   //   }
   // };
+
   const handleResponses = async () => {
     setState((prevState) => ({ ...prevState, loading: true }));
     const { prompt } = state;
@@ -183,12 +181,72 @@ const Main = () => {
                         </div>
                       </div>
                       <div>
-                        <p
-                          className="user-req text-clr"
-                          dangerouslySetInnerHTML={{
-                            __html: md.render(el.text || ""),
+                        <Markdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            strong: ({ ...props }) => (
+                              <strong className="markdown-strong" {...props} />
+                            ),
+                            em: ({ ...props }) => (
+                              <em className="markdown-em" {...props} />
+                            ),
+                            p: ({ ...props }) => (
+                              <p
+                                className={`markdown-p ${
+                                  el.role === "user"
+                                    ? "markdown-user"
+                                    : " "
+                                }`}
+                                {...props}
+                              />
+                            ),
+                            ul: ({ ...props }) => (
+                              <ul className="markdown-ul" {...props} />
+                            ),
+                            ol: ({ ...props }) => (
+                              <ol className="markdown-ol" {...props} />
+                            ),
+                            li: ({ ...props }) => (
+                              <li className="markdown-li" {...props} />
+                            ),
+                            blockquote: ({ ...props }) => (
+                              <blockquote
+                                className="markdown-blockquote"
+                                {...props}
+                              />
+                            ),
+                            code: ({ ...props }) => (
+                              <code
+                                className={`markdown-code ${
+                                  el.role === "user"
+                                    ? ""
+                                    : "markdown-other-code"
+                                }`}
+                                {...props}
+                              />
+                            ),
+                            pre: ({ ...props }) => (
+                              <pre className="markdown-pre" {...props} />
+                            ),
+                            h1: ({ ...props }) => (
+                              <h1 className="markdown-h1" {...props} />
+                            ),
+                            h2: ({ ...props }) => (
+                              <h2 className="markdown-h2" {...props} />
+                            ),
+                            h3: ({ ...props }) => (
+                              <h3 className="markdown-h3" {...props} />
+                            ),
+                            h4: ({ ...props }) => (
+                              <h4 className="markdown-h4" {...props} />
+                            ),
+                            a: ({ ...props }) => (
+                              <a className="markdown-a" {...props} />
+                            ),
                           }}
-                        ></p>
+                        >
+                          {el.text}
+                        </Markdown>
                       </div>
                     </div>
                   ))}
@@ -205,6 +263,12 @@ const Main = () => {
               value={state.prompt}
               onChange={(e) => setState({ ...state, prompt: e.target.value })}
               placeholder="Type your message here..."
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleResponses();
+                }
+              }}
             ></textarea>
             <div className="send-btn">
               <button
