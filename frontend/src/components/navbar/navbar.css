@@ -171,10 +171,10 @@
   margin: 0;
   position: relative;
   outline: 0;
-  border: 2px solid gray;
+  border: 1px solid gray;
   border-radius: 12px;
   background-color: #525252;
-  padding: 8px 8px 8px 8px !important;
+  padding: 4px 4px 4px 4px !important;
 }
 
 .css-1rju2q6-MuiButtonBase-root-MuiMenuItem-root {
